@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <h1>Window Names</h1>
+
+    <section>
+      <h2>Show window names in the OS title bar</h2>
+      <p>
+        Firefox can show each window's name in a title bar across the top of
+        the window — handy on macOS, where the title bar is hidden by default.
+        Firefox doesn't let an extension flip this for you, but it's a one-time
+        toggle:
+      </p>
+      <ol>
+        <li>Right-click an empty area of the toolbar.</li>
+        <li>Choose <strong>Customize Toolbar…</strong></li>
+        <li>
+          At the bottom-left, tick the <strong>Title Bar</strong> checkbox.
+        </li>
+        <li>Click <strong>Done</strong>.</li>
+      </ol>
+      <button id="openCustomize" type="button">
+        Open Customize Toolbar
+      </button>
+      <p class="hint" id="hint" hidden>
+        If that didn't open, do it manually with the steps above.
+      </p>
+    </section>
+
+    <section>
+      <h2>Where names show up</h2>
+      <ul>
+        <li>The toolbar button badge and tooltip (always visible).</li>
+        <li>The OS title bar (once enabled above).</li>
+        <li>The taskbar / window switcher.</li>
+        <li>The macOS dock icon's window list.</li>
+      </ul>
+    </section>
+
+    <script src="options.js"></script>
+  </body>
+</html>

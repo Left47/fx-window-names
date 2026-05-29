@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Window Names",
+  "version": "0.1.0",
+  "description": "Give your Firefox windows custom names that show in the title bar, taskbar, and the macOS dock window menu.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "window-names@jimthomas",
+      "strict_min_version": "109.0"
+    }
+  },
+  "permissions": ["storage", "theme", "management"],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
+  "action": {
+    "default_title": "Name this window",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon.svg",
+      "32": "icons/icon.svg"
+    }
+  },
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  }
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <form id="form">
+      <label for="name">Window name</label>
+      <input
+        id="name"
+        type="text"
+        placeholder="e.g. Work, Research, Email…"
+        autocomplete="off"
+        autofocus
+      />
+
+      <label>Window color</label>
+      <div class="swatches" id="swatches">
+        <button type="button" class="swatch none" data-color="" title="None">
+          ✕
+        </button>
+        <button type="button" class="swatch" data-color="#cdced4" style="background:#cdced4" title="Gray"></button>
+        <button type="button" class="swatch" data-color="#ffe9a6" style="background:#ffe9a6" title="Yellow"></button>
+        <button type="button" class="swatch" data-color="#ffd3a6" style="background:#ffd3a6" title="Orange"></button>
+        <button type="button" class="swatch" data-color="#f6c0c0" style="background:#f6c0c0" title="Red"></button>
+        <button type="button" class="swatch" data-color="#f6c5df" style="background:#f6c5df" title="Pink"></button>
+        <button type="button" class="swatch" data-color="#ecc4f0" style="background:#ecc4f0" title="Lilac"></button>
+        <button type="button" class="swatch" data-color="#d4cbf2" style="background:#d4cbf2" title="Violet"></button>
+        <button type="button" class="swatch" data-color="#c0ddf5" style="background:#c0ddf5" title="Blue"></button>
+        <button type="button" class="swatch" data-color="#cce9c4" style="background:#cce9c4" title="Green"></button>
+        <button type="button" class="swatch" data-color="#c2edf0" style="background:#c2edf0" title="Cyan"></button>
+      </div>
+
+      <div class="buttons">
+        <button
+          type="button"
+          id="clear"
+          class="secondary"
+          title="Remove this window's name and color, and restore your installed theme. Restoring is global, so other windows briefly re-apply their colors."
+        >
+          Clear
+        </button>
+        <button type="submit" id="save">Save</button>
+      </div>
+    </form>
+    <script src="popup.js"></script>
+  </body>
+</html>

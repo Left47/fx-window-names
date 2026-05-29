@@ -1,0 +1,87 @@
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: 12px;
+  width: 240px;
+  font: 13px system-ui, sans-serif;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input {
+  padding: 6px 8px;
+  font-size: 14px;
+  border: 1px solid #999;
+  border-radius: 6px;
+  background: Field;
+  color: FieldText;
+}
+
+input:focus {
+  outline: 2px solid #0a84ff;
+  outline-offset: -1px;
+  border-color: #0a84ff;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.swatch.none {
+  background: transparent;
+  color: inherit;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.swatch.selected {
+  outline: 2px solid #0a84ff;
+  outline-offset: 2px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+button {
+  padding: 6px 14px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#save {
+  background: #0a84ff;
+  color: #fff;
+}
+
+.secondary {
+  background: transparent;
+  color: inherit;
+  border: 1px solid #999;
+}
