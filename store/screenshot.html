@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      :root { color-scheme: light; }
+      html, body { margin: 0; }
+      /* render at 2x for a crisp screenshot (window-size is doubled to match) */
+      html { transform: scale(2); transform-origin: 0 0; }
+      .stage {
+        width: 420px;
+        height: 360px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(120deg, #ede9fe, #f5f3ff 50%, #ede9fe);
+        font: 13px system-ui, sans-serif;
+      }
+      .popup {
+        width: 240px;
+        padding: 12px;
+        background: #ffffff;
+        color: #15141a;
+        border-radius: 10px;
+        box-shadow: 0 8px 28px rgba(20, 20, 40, 0.18);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      label { font-weight: 600; }
+      input[type="text"] {
+        padding: 6px 8px;
+        font-size: 14px;
+        border: 1px solid #8f8f9d;
+        border-radius: 6px;
+        background: #fff;
+        color: #15141a;
+      }
+      .input-focus {
+        outline: 2px solid #7c3aed;
+        outline-offset: -1px;
+        border-color: #7c3aed;
+      }
+      .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+      .swatch {
+        width: 26px; height: 26px; padding: 0;
+        border: 1px solid rgba(128,128,128,0.5);
+        border-radius: 50%;
+        box-sizing: border-box;
+      }
+      .swatch.none {
+        background: transparent;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 13px; color: #555;
+      }
+      .swatch.selected { outline: 2px solid #7c3aed; outline-offset: 2px; }
+      .buttons { display: flex; justify-content: flex-end; gap: 8px; }
+      button.action { padding: 6px 14px; font-size: 13px; border: none; border-radius: 6px; }
+      .secondary { background: transparent; border: 1px solid #8f8f9d; color: #15141a; }
+      .primary { background: #7c3aed; color: #fff; }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="popup">
+        <label>Window name</label>
+        <input class="input-focus" type="text" value="Work" />
+
+        <label>Window color</label>
+        <div class="swatches">
+          <span class="swatch none">✕</span>
+          <span class="swatch" style="background:#cdced4"></span>
+          <span class="swatch" style="background:#ffe9a6"></span>
+          <span class="swatch" style="background:#ffd3a6"></span>
+          <span class="swatch" style="background:#f6c0c0"></span>
+          <span class="swatch" style="background:#f6c5df"></span>
+          <span class="swatch" style="background:#ecc4f0"></span>
+          <span class="swatch selected" style="background:#d4cbf2"></span>
+          <span class="swatch" style="background:#c0ddf5"></span>
+          <span class="swatch" style="background:#cce9c4"></span>
+          <span class="swatch" style="background:#c2edf0"></span>
+        </div>
+
+        <div class="buttons">
+          <button class="action secondary">Clear</button>
+          <button class="action primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,9 +1,17 @@
 # Window Names
 
+<img src="store/icon-128.png" alt="Window Names icon" width="96" align="right">
+
 A small Firefox extension that lets you give each browser window a custom name
 and color. The name shows up in the title bar, the taskbar/window switcher, and
 the macOS dock icon's window list — making it easy to tell windows apart when
 you have several open for different contexts (Work, Research, Email…).
+
+The popup, where you name the current window and pick a color (light and dark
+themes):
+
+![Window Names popup, light theme](store/screenshot.png)
+![Window Names popup, dark theme](store/screenshot-dark.png)
 
 ## Features
 
