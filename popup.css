@@ -4,12 +4,19 @@
 
 body {
   margin: 0;
-  padding: 12px;
-  width: 240px;
+  padding: 16px;
+  width: 252px;
   font: 13px system-ui, sans-serif;
 }
 
 form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* label + control grouped tightly; the form gap separates the groups */
+.field {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -20,7 +27,7 @@ label {
 }
 
 input {
-  padding: 6px 8px;
+  padding: 8px 10px;
   font-size: 14px;
   border: 1px solid #999;
   border-radius: 6px;
@@ -34,16 +41,27 @@ input:focus {
   border-color: #0a84ff;
 }
 
+/* Same 5-column grid as the swatches so the "no color" ✕ aligns over the
+   last column instead of floating at the popup edge. */
 .color-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 12px; /* match .swatches so column tracks line up */
   align-items: center;
-  justify-content: space-between;
+}
+
+.color-row label {
+  grid-column: 1 / 5;
+}
+
+.color-row .swatch.none {
+  justify-self: center;
 }
 
 .swatches {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  gap: 12px;
   justify-items: center;
 }
 

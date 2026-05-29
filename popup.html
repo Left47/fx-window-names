@@ -6,22 +6,25 @@
   </head>
   <body>
     <form id="form">
-      <label for="name">Window name</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="e.g. Work, Research, Email…"
-        autocomplete="off"
-        autofocus
-      />
-
-      <div class="color-row">
-        <label>Window color</label>
-        <button type="button" class="swatch none" data-color="" title="No color">
-          ✕
-        </button>
+      <div class="field">
+        <label for="name">Window name</label>
+        <input
+          id="name"
+          type="text"
+          placeholder="e.g. Work, Research, Email…"
+          autocomplete="off"
+          autofocus
+        />
       </div>
-      <div class="swatches" id="swatches">
+
+      <div class="field">
+        <div class="color-row">
+          <label>Window color</label>
+          <button type="button" class="swatch none" data-color="" title="No color">
+            ✕
+          </button>
+        </div>
+        <div class="swatches" id="swatches">
         <button type="button" class="swatch" data-color="#cdced4" style="background:#cdced4" title="Gray"></button>
         <button type="button" class="swatch" data-color="#ffe9a6" style="background:#ffe9a6" title="Yellow"></button>
         <button type="button" class="swatch" data-color="#ffd3a6" style="background:#ffd3a6" title="Orange"></button>
@@ -32,6 +35,7 @@
         <button type="button" class="swatch" data-color="#c0ddf5" style="background:#c0ddf5" title="Blue"></button>
         <button type="button" class="swatch" data-color="#cce9c4" style="background:#cce9c4" title="Green"></button>
         <button type="button" class="swatch" data-color="#c2edf0" style="background:#c2edf0" title="Cyan"></button>
+        </div>
       </div>
 
       <div class="buttons">
