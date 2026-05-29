@@ -41,9 +41,10 @@
         outline-offset: -1px;
         border-color: #a78bfa;
       }
-      .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+      .color-row { display: flex; align-items: center; justify-content: space-between; }
+      .swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; justify-items: center; }
       .swatch {
-        width: 26px; height: 26px; padding: 0;
+        width: 28px; height: 28px; padding: 0;
         border: 1px solid rgba(180,180,190,0.4);
         border-radius: 50%;
         box-sizing: border-box;
@@ -66,9 +67,11 @@
         <label>Window name</label>
         <input class="input-focus" type="text" value="Work" />
 
-        <label>Window color</label>
-        <div class="swatches">
+        <div class="color-row">
+          <label>Window color</label>
           <span class="swatch none">✕</span>
+        </div>
+        <div class="swatches">
           <span class="swatch" style="background:#cdced4"></span>
           <span class="swatch" style="background:#ffe9a6"></span>
           <span class="swatch" style="background:#ffd3a6"></span>

@@ -34,15 +34,22 @@ input:focus {
   border-color: #0a84ff;
 }
 
-.swatches {
+.color-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  justify-items: center;
 }
 
 .swatch {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 1px solid rgba(128, 128, 128, 0.5);
   border-radius: 50%;

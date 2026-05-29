@@ -8,16 +8,17 @@
 // The actual title/badge/theme updates and persistence happen in background.js.
 
 const input = document.getElementById("name");
-const swatches = document.getElementById("swatches");
 const form = document.getElementById("form");
 const clearBtn = document.getElementById("clear");
+// All color choices, including the "None" swatch that sits on the label row.
+const swatchButtons = document.querySelectorAll(".swatch");
 
 let currentWindowId;
 let selectedColor = "";
 
 function selectColor(color) {
   selectedColor = color;
-  for (const btn of swatches.querySelectorAll(".swatch")) {
+  for (const btn of swatchButtons) {
     btn.classList.toggle("selected", btn.dataset.color === color);
   }
 }
@@ -35,10 +36,9 @@ async function init() {
   input.select();
 }
 
-swatches.addEventListener("click", (e) => {
-  const btn = e.target.closest(".swatch");
-  if (btn) selectColor(btn.dataset.color);
-});
+for (const btn of swatchButtons) {
+  btn.addEventListener("click", () => selectColor(btn.dataset.color));
+}
 
 async function save(name, color) {
   await browser.runtime.sendMessage({
