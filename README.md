@@ -27,6 +27,11 @@ themes):
   theme uses).
 - **In-chrome confirmation** — the toolbar button shows the window's name as a
   badge, tinted with the chosen color.
+- **Survives restarts** — names and colors are restored to the right windows
+  when Firefox restores your session (and when you reopen a closed window).
+- **Title format** — choose how the name sits in front of the page title
+  (`Work — `, `Work | `, `[Work] `, … or your own with `{name}`) on the
+  Preferences page.
 
 ## Install (temporary, for development)
 
@@ -43,8 +48,12 @@ macOS (where it's hidden by default), see the extension's **Preferences** page
 This extension pushed on a few edges of the WebExtension theme/window APIs.
 Notes for anyone extending it:
 
-- **Window ids aren't stable across restarts.** Names/colors live for as long as
-  a window is open; they don't survive a full browser restart.
+- **Window ids aren't stable across restarts.** Firefox renumbers windows every
+  session, so storing names by window id puts them on the wrong windows after a
+  restart. Names/colors are attached to the window itself with
+  `sessions.setWindowValue`, which Firefox saves and restores with the session.
+  During restore a window can appear before its saved value does, so restored
+  windows are re-checked a few times.
 - **The native macOS title bar isn't themeable.** Extensions can only set its
   light/dark *scheme* (via `properties.color_scheme`), not an arbitrary color.
 - **Per-window themes replace the whole theme** for that window. To restore the
@@ -61,7 +70,10 @@ Notes for anyone extending it:
 
 ## Permissions
 
-- `storage` — remember each window's name/color for the session.
+- `storage` — remember your title format setting.
+- `sessions` — save each window's name/color with the window so it comes back
+  after a restart. (Firefox describes this as "Access recently closed tabs";
+  the extension only reads and writes its own per-window values.)
 - `theme` — color a window's chrome.
 - `management` — re-enable your installed theme when a color is cleared.
 

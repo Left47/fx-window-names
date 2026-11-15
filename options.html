@@ -8,6 +8,33 @@
     <h1>Window Names</h1>
 
     <section>
+      <h2>Title format</h2>
+      <p>How a window's name is added in front of the page title.</p>
+      <label class="field">
+        <select id="formatPreset">
+          <option value="{name} — ">Work — Page title</option>
+          <option value="{name} | ">Work | Page title</option>
+          <option value="{name} · ">Work · Page title</option>
+          <option value="{name}: ">Work: Page title</option>
+          <option value="{name} ▸ ">Work ▸ Page title</option>
+          <option value="[{name}] ">[Work] Page title</option>
+          <option value="custom">Custom…</option>
+        </select>
+      </label>
+      <div id="customRow" hidden>
+        <label class="field">
+          <input id="formatCustom" type="text" spellcheck="false"
+                 placeholder="«{name}» " />
+        </label>
+        <p class="hint">
+          Use <code>{name}</code> where the window name goes. Include any
+          spaces you want between it and the page title.
+        </p>
+      </div>
+      <p class="hint" id="formatPreview"></p>
+    </section>
+
+    <section>
       <h2>Show window names in the OS title bar</h2>
       <p>
         Firefox can show each window's name in a title bar across the top of

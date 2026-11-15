@@ -43,3 +43,22 @@ button {
   font-size: 13px;
   opacity: 0.8;
 }
+
+.field select,
+.field input {
+  font: inherit;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+  background: Field;
+  color: FieldText;
+  min-width: 240px;
+}
+
+#customRow {
+  margin-top: 8px;
+}
+
+code {
+  font-size: 13px;
+}

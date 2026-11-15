@@ -1,25 +1,52 @@
 // Window Names — background script
 //
-// Stores a custom name + color per window in storage.local (keyed by window
-// id) and reflects them into Firefox:
+// Stores a custom name + color per window and reflects them into Firefox:
 //   - the window title, via `windows.update({ titlePreface })` (shows in the
 //     OS title bar, taskbar/window switcher, and macOS dock window menu);
 //   - the toolbar button badge + tooltip (always visible in the chrome);
 //   - the window's chrome color, via a per-window `theme.update(windowId, …)`.
 //
-// Note: window ids are assigned fresh each browser session, so names/colors do
-// not survive a full restart — they live for as long as the window is open.
+// Each window's name/color is attached to the window itself with
+// `sessions.setWindowValue`. Firefox saves that value with the session and
+// gives it back to the same window when the session is restored, so names
+// survive a restart and follow the right window. (Window ids are reassigned
+// every session, so keying storage by id put names on the wrong windows.)
 
-const STORAGE_KEY = "windowNames";
-const SEPARATOR = " — "; // separates the custom name from the page title
+const VALUE_KEY = "entry"; // per-window session value: { name, color }
+const LEGACY_STORAGE_KEY = "windowNames"; // old id-keyed store, no longer used
+const FORMAT_KEY = "titleFormat"; // storage.local: how the name is shown
+const DEFAULT_FORMAT = "{name} — ";
 
-async function loadEntries() {
-  const result = await browser.storage.local.get(STORAGE_KEY);
-  return result[STORAGE_KEY] || {};
+async function getStoredEntry(windowId) {
+  try {
+    const e = await browser.sessions.getWindowValue(windowId, VALUE_KEY);
+    return e && typeof e === "object" ? e : null;
+  } catch (e) {
+    return null; // window gone
+  }
 }
 
-async function saveEntries(entries) {
-  await browser.storage.local.set({ [STORAGE_KEY]: entries });
+async function setStoredEntry(windowId, entry) {
+  try {
+    if (entry) {
+      await browser.sessions.setWindowValue(windowId, VALUE_KEY, entry);
+    } else {
+      await browser.sessions.removeWindowValue(windowId, VALUE_KEY);
+    }
+  } catch (e) {
+    /* window gone — ignore */
+  }
+}
+
+async function getFormat() {
+  const r = await browser.storage.local.get(FORMAT_KEY);
+  const f = r[FORMAT_KEY];
+  return typeof f === "string" && f.includes("{name}") ? f : DEFAULT_FORMAT;
+}
+
+async function titlePrefaceFor(name) {
+  if (!name) return "";
+  return (await getFormat()).replace("{name}", name);
 }
 
 function toRgb(hex) {
@@ -272,103 +299,103 @@ async function restoreThemes(clearedWindowId) {
     }
   }
 
-  const entries = await loadEntries();
-  for (const [id, entry] of Object.entries(entries)) {
-    if (Number(id) === clearedWindowId || !entry.color) continue;
+  const windows = await browser.windows.getAll();
+  for (const w of windows) {
+    if (w.id === clearedWindowId) continue;
+    const entry = await getStoredEntry(w.id);
+    if (!entry || !entry.color) continue;
     try {
-      await applyColor(Number(id), entry.color);
+      await applyColor(w.id, entry.color);
     } catch (e) {
       /* ignore */
     }
   }
 }
 
-// Apply name + color to a window and persist. Empty values clear them.
-async function applyEntry(windowId, name, color) {
-  const entries = await loadEntries();
-  const prev = entries[windowId] || {};
-  const trimmed = (name || "").trim();
-
-  const titlePreface = trimmed ? trimmed + SEPARATOR : "";
+// Reflect a stored entry into a window: title, badge, color.
+async function paintWindow(windowId, entry) {
   try {
-    await browser.windows.update(windowId, { titlePreface });
+    await browser.windows.update(windowId, {
+      titlePreface: await titlePrefaceFor(entry.name),
+    });
   } catch (e) {
-    // Window may have closed between read and write — ignore.
+    /* window gone — ignore */
   }
-  await applyToChrome(windowId, trimmed, color);
-
-  if (color) {
+  await applyToChrome(windowId, entry.name, entry.color);
+  if (entry.color) {
     try {
-      await applyColor(windowId, color);
+      await applyColor(windowId, entry.color);
     } catch (e) {
       /* window gone or theme API unavailable — ignore */
     }
-  } else if (prev.color) {
+  }
+}
+
+// Apply name + color to a window and persist. Empty values clear them.
+async function applyEntry(windowId, name, color) {
+  const prev = (await getStoredEntry(windowId)) || {};
+  const trimmed = (name || "").trim();
+  const entry = { name: trimmed, color: color || "" };
+
+  await paintWindow(windowId, entry);
+  if (!entry.color && prev.color) {
     await restoreThemes(windowId);
   }
-
-  if (trimmed || color) {
-    entries[windowId] = { name: trimmed, color: color || "" };
-  } else {
-    delete entries[windowId];
-  }
-  await saveEntries(entries);
+  await setStoredEntry(windowId, trimmed || color ? entry : null);
 }
 
 async function getEntry(windowId) {
-  const entries = await loadEntries();
-  const e = entries[windowId] || {};
+  const e = (await getStoredEntry(windowId)) || {};
   return { name: e.name || "", color: e.color || "" };
 }
 
-// Re-apply stored names/colors to currently open windows. Useful if the
-// background script is restarted while windows are still open.
-async function reapplyAll() {
-  const entries = await loadEntries();
-  const windows = await browser.windows.getAll();
-  const live = new Set(windows.map((w) => String(w.id)));
-  let changed = false;
+// Re-apply a window's stored name/color. During session restore Firefox can
+// create the window before it hands back the window's saved values, so if
+// nothing is there yet, check again a few times before giving up.
+const RESTORE_RETRY_MS = [0, 500, 1500, 4000];
 
-  for (const w of windows) {
-    const entry = entries[w.id];
-    if (!entry) continue;
-    await applyToChrome(w.id, entry.name, entry.color);
-    if (entry.name) {
-      try {
-        await browser.windows.update(w.id, {
-          titlePreface: entry.name + SEPARATOR,
-        });
-      } catch (e) {
-        /* ignore */
-      }
-    }
-    if (entry.color) {
-      try {
-        await applyColor(w.id, entry.color);
-      } catch (e) {
-        /* ignore */
-      }
+async function reapplyWindow(windowId) {
+  for (const delay of RESTORE_RETRY_MS) {
+    if (delay) await new Promise((r) => setTimeout(r, delay));
+    const entry = await getStoredEntry(windowId);
+    if (entry && (entry.name || entry.color)) {
+      await paintWindow(windowId, entry);
+      return;
     }
   }
-
-  // Drop entries for windows that no longer exist.
-  for (const id of Object.keys(entries)) {
-    if (!live.has(id)) {
-      delete entries[id];
-      changed = true;
-    }
-  }
-  if (changed) await saveEntries(entries);
 }
 
-// Clean up storage when a window closes.
-browser.windows.onRemoved.addListener(async (windowId) => {
-  const entries = await loadEntries();
-  if (entries[windowId] !== undefined) {
-    delete entries[windowId];
-    await saveEntries(entries);
+async function reapplyAll() {
+  const windows = await browser.windows.getAll();
+  await Promise.all(windows.map((w) => reapplyWindow(w.id)));
+}
+
+// Restored windows (session restore, or reopening a recently closed window)
+// arrive as new windows carrying their saved values.
+browser.windows.onCreated.addListener((win) => {
+  reapplyWindow(win.id);
+});
+
+// The title format changed in the options page — rewrite every window title.
+browser.storage.onChanged.addListener(async (changes, area) => {
+  if (area !== "local" || !changes[FORMAT_KEY]) return;
+  const windows = await browser.windows.getAll();
+  for (const w of windows) {
+    const entry = await getStoredEntry(w.id);
+    if (!entry || !entry.name) continue;
+    try {
+      await browser.windows.update(w.id, {
+        titlePreface: await titlePrefaceFor(entry.name),
+      });
+    } catch (e) {
+      /* ignore */
+    }
   }
 });
+
+// Drop the old id-keyed store: its ids belong to past sessions, which is what
+// put names on the wrong windows after a restart.
+browser.storage.local.remove(LEGACY_STORAGE_KEY);
 
 // Style the badge once so the name reads clearly on the toolbar button.
 browser.action.setBadgeBackgroundColor({ color: "#0a84ff" });
